@@ -1,5 +1,10 @@
 package com.whitebox.testing.inventory;
 
+/**
+ * 
+ * Item holds the item and price information
+ *
+ */
 public class Item {
 	
 	private String itemId;

@@ -1,5 +1,10 @@
 package com.whitebox.testing.customer;
 
+/**
+ * 
+ * Customer class holds customer information
+ *
+ */
 public class Customer {
 	
 	private int customerId;
