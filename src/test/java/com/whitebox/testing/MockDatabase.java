@@ -122,8 +122,27 @@ public class MockDatabase {
 		}
 		return mockCartItems;
 	}
-	
-	/**
+
+    /**
+     * Returning 5 itemIds populated in cart.
+     * @return
+     */
+    public static List<String> getCartWithMoreThanZeroButLessThanFiveItems() {
+        List<String> mockCartItems = new ArrayList<String>();
+        for (int i = 0; i < 2; i++) {
+            mockCartItems.add("1");
+        }
+        for (int i = 0; i < 1; i++) {
+            mockCartItems.add("2");
+        }
+        for (int i = 0; i < 1; i++) {
+            mockCartItems.add("2");
+        }
+        return mockCartItems;
+    }
+
+
+    /**
 	 * Returning 60 itemIds populated in cart.
 	 * @return
 	 */
@@ -151,6 +170,7 @@ public class MockDatabase {
 		for (String mockItemId : mockCartItems) {
 			totalPrice += mockInventory.getItem(mockItemId).getPrice();
 		}
+		totalPrice=roundOff(totalPrice);
 		return totalPrice;
 	}
 	
@@ -162,7 +182,9 @@ public class MockDatabase {
 	 */
 	public static double getDiscountedPriceForCartItems(List<String> mockCartItems, float discountPercentage) {
 		double totalPriceBeforeDiscount = getTotalPriceForCart(mockCartItems);
-		return totalPriceBeforeDiscount - (totalPriceBeforeDiscount * discountPercentage) / 100;
+		totalPriceBeforeDiscount =totalPriceBeforeDiscount- (totalPriceBeforeDiscount * discountPercentage) / 100;
+		totalPriceBeforeDiscount=roundOff(totalPriceBeforeDiscount);
+		return totalPriceBeforeDiscount;
 	}
 	
 	/**
@@ -172,7 +194,9 @@ public class MockDatabase {
 	 * @return
 	 */
 	public static double getFinalDiscountedPriceFromTotalPrice(double totalPrice, float discountPercentage) {
-		return totalPrice - (totalPrice * discountPercentage) / 100;
+		totalPrice=totalPrice - (totalPrice * discountPercentage) / 100;
+		totalPrice=roundOff(totalPrice);
+		return totalPrice;
 	}
 	
 	/**
@@ -182,7 +206,14 @@ public class MockDatabase {
 	 * @return
 	 */
 	public static double getTaxAmount(double totalPriceBeforeTax, float taxRate) {
-		return (totalPriceBeforeTax * taxRate) / 100;
+		double taxAmt=(totalPriceBeforeTax * taxRate) / 100;
+		double tax=roundOff(taxAmt);
+		return tax;
 	}
+
+	/** Perform Rounding Off */
+	private static double roundOff(double value)
+	{value=Math.round(value*100.0)/100.0;
+		return value;}
 
 }

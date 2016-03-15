@@ -13,6 +13,10 @@ import com.whitebox.testing.inventory.Item;
 public class ShoppingCart {
 	
 	private Inventory inventory;
+    private double subTotal;
+    private double discountAmt;
+    private double taxAmt;
+    private double total;
 	
 	public ShoppingCart(Inventory inventory) {
 		this.inventory = inventory;
@@ -46,6 +50,8 @@ public class ShoppingCart {
 			Item item = inventory.getItem(itemId);
 			totalPriceBeforeTax += item.getPrice();
 		}
+        subTotal=totalPriceBeforeTax;
+        subTotal=roundOff(subTotal);
 		/**
 		 * Calculating price after discount according to number of items in the cart.
 		 */
@@ -61,26 +67,71 @@ public class ShoppingCart {
 			 */
 			totalPriceBeforeTax = getDiscountedPrice(totalPriceBeforeTax, 10f);
 		} 
-		
+		discountAmt=subTotal-totalPriceBeforeTax;
+        discountAmt=roundOff(discountAmt);
 		/**
 		 * If a customer is a store’s discount shopping club member, then he/she gets an additional 10% discount.
 		 */
 		if (customer.isMember()) {
 			totalPriceBeforeTax = getDiscountedPrice(totalPriceBeforeTax, 10f);
+            discountAmt=subTotal-totalPriceBeforeTax;
+            discountAmt=roundOff(discountAmt);
 		}
+        taxAmt=0;
 		/**
 		 * If a customer is not tax exempt, then 4.5% tax rate applies to the total price.
 		 */
 		if (!customer.isTaxExempt()) {
 			double totalPriceAfterTax = totalPriceBeforeTax + getTaxAmount(totalPriceBeforeTax, 4.5f);
+            taxAmt=getTaxAmount(totalPriceBeforeTax, 4.5f);
+            totalPriceAfterTax=roundOff(totalPriceAfterTax);
+            total=totalPriceAfterTax;
 			return totalPriceAfterTax;
 		}
+        totalPriceBeforeTax=roundOff(totalPriceBeforeTax);
+        total=totalPriceBeforeTax;
 		/**
 		 * Otherwise customer is tax exempt and for that reason no tax rate applies, return total price before tax.
 		 */
 		return totalPriceBeforeTax;
 	}
-	
+
+    /** Return Sub Total (Pre-Tax and Pre-Discount) Amount */
+
+    public double getSubTotalAmt (List<String> productIDs, Customer customer)
+    {calcPurchasePrice (productIDs, customer);
+        return subTotal;
+    }
+
+    /** Return Discount Amount */
+
+    public double getDiscountAmt (List<String> productIDs, Customer customer)
+    {calcPurchasePrice (productIDs, customer);
+        return discountAmt;
+    }
+
+    /** Return Tax Amount */
+
+    public double getTaxAmt (List<String> productIDs, Customer customer)
+    {calcPurchasePrice (productIDs, customer);
+        return taxAmt;
+    }
+
+    /** Prints Receipt */
+
+    public void printReceipt (List<String> productIDs, Customer customer)
+    {
+        calcPurchasePrice (productIDs, customer);
+        for (String itemId : productIDs) {
+            Item item = inventory.getItem(itemId);
+            System.out.print(itemId + "  " + item.getPrice());
+        }
+        System.out.print("Sub Total : " + subTotal);
+        System.out.print("Discount  : " + discountAmt);
+        System.out.print("Sales Tax : " + taxAmt);
+        System.out.print("Total     : " + total);
+    }
+
 	/**
 	 * Get Discounted Price after applying discount percentage on total price
 	 * @param totalPrice
@@ -98,7 +149,14 @@ public class ShoppingCart {
 	 * @return
 	 */
 	private double getTaxAmount(double totalPrice, float taxRate) {
-		return (totalPrice * taxRate) / 100;
+		double taxAmount=(totalPrice * taxRate) / 100;
+        taxAmount=roundOff(taxAmount);
+        return taxAmount;
 	}
+
+    /** Perform Rounding Off */
+    private double roundOff(double value)
+    {value=Math.round(value*100.0)/100.0;
+    return value;}
 
 }
